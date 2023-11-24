@@ -7,6 +7,8 @@ import {Dashboard} from './pages/dashboard'
 import {Login} from './pages/login'
 import {Products} from './pages/products'
 
+import { RouteProtection } from './services/routeProtection'
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -18,19 +20,19 @@ const router = createBrowserRouter([
   },
   {
     path: '/addclients',
-    element: <AddClients/>
+    element: <RouteProtection><AddClients/></RouteProtection>
   },
   {
     path: '/addproducts',
-    element: <AddProducts/>
+    element: <RouteProtection><AddProducts/></RouteProtection>
   },
   {
     path: '/addsales',
-    element: <AddSales/>
+    element: <RouteProtection><AddSales/></RouteProtection>
   },
   {
     path: '/Dashboard',
-    element: <Dashboard/>
+    element: <RouteProtection><Dashboard/></RouteProtection>
   },
   {
     path: '/products',
