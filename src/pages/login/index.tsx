@@ -1,35 +1,54 @@
+import { signInWithEmailAndPassword, signOut } from 'firebase/auth'
+import { Auth } from '../../services/firebaseConnection';
+import { useEffect } from 'react';
 
 
-import { FormEvent, useState } from "react";
 import Input from "../../components/input";
-import { useNavigate } from "react-router-dom";
 
-import { Auth } from "../../services/firebaseConnection";
-import { signInWithEmailAndPassword } from "firebase/auth";
+
+import {useForm} from "react-hook-form"
+import {z} from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useNavigate } from 'react-router-dom';
+
+
+
+const schema = z.object({
+  email:z.string().email("Insira um email valido").min(1),
+  password:z.string().min(1,"Esse campo nao pode ficar em branco")
+})
+
+type FormData = z.infer<typeof schema>
 
 export function Login() {
+  const {register, handleSubmit, formState: {errors}} = useForm<FormData>({
+    resolver: zodResolver(schema),
+    mode: "onChange"
+  })
+  
+  //LOG OUT
+  const navigate = useNavigate()
+   useEffect(()=>{
+    async function handleLogout(){
+      await signOut(Auth)
+    }
+    handleLogout()
 
-    const [Email, SetEmail] = useState("")
-    const [Password, SetPassword] = useState("")
-    const navigate = useNavigate()
+   },[])
 
-    function handleSubmit(e:FormEvent){
-        e.preventDefault()
 
-       if (Email === '' || Password === ''){
-        alert('Preencha todos os campos')
-        return;
-       }
 
-       signInWithEmailAndPassword(Auth, Email, Password)
-        .then(() => {
-            console.log('Logado com sucesso')
-            navigate("/dashboard", {replace: true})
-        })
-       .catch((error) => {
-            console.log("Erro ao fazer o login")
-            console.log(error)
-       })
+    async function onSubmit(data:FormData){
+    signInWithEmailAndPassword(Auth,data.email, data.password)
+    .then(() =>{
+      console.log("Logado com sucesso")
+      navigate("/dashboard", {replace:true})
+
+    })
+    .catch(err =>{
+      console.log("Erro ao logar")
+      console.log(err)
+    })
 
     }
 
@@ -50,22 +69,20 @@ export function Login() {
         <div className="my-5 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-neutral-300 after:mt-0.5 after:flex-1 after:border-t after:border-neutral-300">
           <p className="mx-4 mb-0 text-center font-semibold text-slate-500"></p>
         </div>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(onSubmit)}>
         <Input
         placeholder="Email"
         type="email"
-        value={Email}
-        onChange={(e) => SetEmail(e.target.value)}
-        autoComplete="username"
-        required
+        name="email"
+        error={errors.email?.message}
+        register={register}
         />
         <Input
         placeholder="Password"
         type="password"
-        value={Password}
-        autoComplete="new-password"
-        required
-        onChange={(e) => SetPassword(e.target.value)}
+        name="password"
+        error={errors.password?.message}
+        register={register}
         />
       
         <div className="text-center md:text-left">

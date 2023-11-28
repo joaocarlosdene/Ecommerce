@@ -21,7 +21,7 @@ export function RouteProtection({children}: ProtectionProps): any {
                     uid: user?.uid,
                     email: user?.email
                 }
-                localStorage.setItem("@ecommerce-dash", JSON.stringify(userData))
+                localStorage.setItem('@ecommerce-dash', JSON.stringify(userData))
                 setloading(false);
                 setSigned(true);
             } else {
@@ -29,6 +29,11 @@ export function RouteProtection({children}: ProtectionProps): any {
                 setSigned(false);
             }
         })
+
+        return () =>{
+            unsub()
+        }
+
     },[])
 
     if(loading){
