@@ -3,7 +3,7 @@ import {Home} from './pages/home'
 import {AddClients} from './pages/addclients'
 import {AddProducts} from './pages/addproduct'
 import {AddSales} from './pages/addsales'
-import {Dashboard} from './pages/dashboard'
+import Dashboard from './pages/dashboard'
 import {Login} from './pages/login'
 import {Products} from './pages/products'
 
